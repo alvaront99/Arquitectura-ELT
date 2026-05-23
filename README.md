@@ -2,7 +2,6 @@
 
 ¡Hola! Bienvenid@ a mi portfolio. Este repositorio contiene el proyecto principal de mi Trabajo de Fin de Grado (TFG) en Desarrollo de Aplicaciones Multiplataforma, especializado en Big Data e Inteligencia Artificial.
 
-## Enfoque del Proyecto
 
 ## Filosofía del Diseño: Arquitectura Desacoplada
 
@@ -12,6 +11,13 @@ La estabilidad no sea un punto único de fallo: Si el módulo de procesamiento a
 
 Escalabilidad modular: Cada componente puede evolucionar o ser reemplazado individualmente (por ejemplo, migrar la visualización de un frontend custom a Power BI) sin afectar a la lógica de negocio del backend.
 
+## Enfoque del Proyecto
+
+El sistema gestiona el ciclo de vida completo de los datos generados por una red de sensores meteorológicos simulada, dividiendo el flujo en dos rutas independientes:
+
+Speed Layer (Ruta Caliente): Un microservicio que intercepta las lecturas de los sensores. Evalúa umbrales dinámicos en tiempo real (alertas críticas) con una latencia mínima.
+
+Batch Layer (Ruta Fría): Implementa una estrategia ELT (Extract, Load, Transform). Los datos se persisten en crudo (Capa Bronce) en PostgreSQL. Posteriormente, procesos orquestados por lotes transforman y segmentan la información en tablas analíticas (Capa Gold) orientadas a la lógica de negocio.
 
 ## Diagrama de la Arquitectura
 
