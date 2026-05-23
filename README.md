@@ -10,6 +10,49 @@ El sistema gestiona el ciclo de vida completo de los datos generados por una red
 * **Batch Layer:** Implementa una estrategia ELT (Extract, Load, Transform). Los datos se persisten en raw (Capa Bronce) en PostgreSQL. Posteriormente, procesos orquestados por lotes transforman y segmentan la información en tablas analíticas (Capa Gold) orientadas a la lógica de negocio.
 
 
+## Diagrama de la Arquitectura
+
+```mermaid
+graph TD
+    %% Estilos de las cajas
+    classDef origen fill:#f9a826,stroke:#333,stroke-width:2px;
+    classDef speed fill:#ef476f,stroke:#333,stroke-width:2px,color:white;
+    classDef batch fill:#118ab2,stroke:#333,stroke-width:2px,color:white;
+    classDef db fill:#06d6a0,stroke:#333,stroke-width:2px,color:#333;
+    classDef ui fill:#073b4c,stroke:#333,stroke-width:2px,color:white;
+
+    %% Origen de Datos
+    Emu["Java: Emulador IoT (CyclicBarrier)"]:::origen
+    
+    %% Speed Layer
+    subgraph Speed Layer [Speed Layer: Ruta Caliente]
+        API_Alertas["Spring Boot: API Alertas"]:::speed
+        Log_Alertas[("PostgreSQL: historial_alertas")]:::db
+    end
+    
+    %% Batch Layer
+    subgraph Batch Layer [Batch Layer: Procesamiento Analítico]
+        Bronce[("PostgreSQL: Capa Bronce (RAW)")]:::db
+        Spark["Apache Spark (WSL2 / Ubuntu)"]:::batch
+        Gold[("PostgreSQL: Capas Gold (Tendencias, Ciclos, Bioclima)")]:::db
+    end
+    
+    %% Serving Layer
+    Dashboard["Frontend: Dashboard Interactivo"]:::ui
+
+    %% Flujos de datos (Flechas)
+    Emu -- "JSON (Micro-batching)" --> API_Alertas
+    Emu -- "JSON (Ingesta RAW)" --> Bronce
+    
+    API_Alertas -- "Filtra anomalías" --> Log_Alertas
+    
+    Bronce -- "Extracción JDBC" --> Spark
+    Spark -- "Transformación ELT" --> Gold
+    
+    Log_Alertas -. "API REST (Baja latencia)" .-> Dashboard
+    Gold -. "API REST (Histórico)" .-> Dashboard
+```
+
 ## Stack Tecnológico y Arquitectura de Red
 
 Para priorizar la estabilidad, los servicios operativos y analíticos están separados, utilizando una red híbrida local para simular la comunicación entre distintos nodos:
