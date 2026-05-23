@@ -1,6 +1,6 @@
 # Arquitectura ELT basasada en patrones Lambda para Monitorización Meteorológica 
 
-¡Hola! Bienvenid@ a mi proyecto de TFG. Este repositorio contiene el proyecto principal de mi Trabajo de Fin de Grado (TFG) en Desarrollo de Aplicaciones Multiplataforma, especializado en Big Data e Inteligencia Artificial.
+¡Hola! Bienvenid@. Este repositorio contiene el proyecto principal de mi Trabajo de Fin de Grado (TFG) en Desarrollo de Aplicaciones Multiplataforma, especializado en Big Data e Inteligencia Artificial.
 
 
 ## Filosofía del Diseño: Arquitectura Desacoplada
