@@ -15,7 +15,7 @@ El sistema gestiona el ciclo de vida completo de los datos generados por una red
 ```mermaid
 graph TD
     %% Estilos de las cajas
-    classDef origen fill:#f9a826,stroke:#333,stroke-width:2px;
+    classDef origen fill:#f9a826,stroke:#333,stroke-width:2px,color:#000;
     classDef speed fill:#ef476f,stroke:#333,stroke-width:2px,color:white;
     classDef batch fill:#118ab2,stroke:#333,stroke-width:2px,color:white;
     classDef db fill:#06d6a0,stroke:#333,stroke-width:2px,color:#333;
