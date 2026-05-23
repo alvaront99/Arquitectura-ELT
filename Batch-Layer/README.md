@@ -58,8 +58,10 @@ def orquestar():
 
 El script de Spark se encarga de la carga pesada. Lee los datos base (Capa Bronce) y realiza cálculos físicos (como el *Wind Chill* o la energía del viento) mediante transformaciones puras (`withColumn`). Posteriormente, realiza agregaciones (`groupBy`) para separar los datos en tres vistas analíticas (Capa Gold): Resúmenes de ciclo, Tendencias (anomalías) y Bioclima.
 
+> **🧠 Gestión de Memoria (In-Memory Computing):** > Un detalle clave de la implementación es el uso de `df_bronce.cache()`. Como a partir de los datos base se generan tres tablas distintas, el *caching* evita que Spark lance tres consultas de lectura separadas contra PostgreSQL, optimizando el rendimiento. De igual forma, el bloque `finally` asegura la ejecución de `df_bronce.unpersist()`, garantizando la liberación de la memoria RAM del clúster al terminar el ciclo y evitando fugas de memoria (*memory leaks*).
+
 ```python
-# 1. Ingeniería de Características Base (Ej. Sensación Térmica / Wind Chill)
+# 1. Ingeniería de Características Base (Ej. Sensación térmica / Wind chill)
 df_base = df_bronce.withColumn("wind_chill", 
     F.when((F.col("temperatura_c") <= 10) & (F.col("velocidad_viento_kmh") > 4.8),
         13.12 + 0.6215 * F.col("temperatura_c") - 11.37 * F.pow(F.col("velocidad_viento_kmh"), 0.16) + 
@@ -79,7 +81,7 @@ df_ciclos = df_base.groupBy().agg(
      .otherwise("Optimo")
 )
 
-# 3. Escritura en PostgreSQL (Modelo Multitabla Analítico)
+# 3. Escritura en PostgreSQL (Modelo multitabla)
 df_ciclos.write.jdbc(url=url_jdbc, table="gold_ciclos", mode="append", properties=properties)
 ```
 
