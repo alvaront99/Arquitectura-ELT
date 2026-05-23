@@ -4,10 +4,13 @@
 
 ## Enfoque del Proyecto
 
-El sistema gestiona el ciclo de vida completo de los datos generados por una red de sensores meteorológicos simulada, dividiendo el flujo en dos rutas independientes para no comprometer el rendimiento:
+## Filosofía del Diseño: Arquitectura Desacoplada
 
-* **Speed Layer:** Un microservicio que intercepta las lecturas mediante ingesta por micro-batching. Evalúa umbrales dinámicos en tiempo real (como alertas de helada o rachas de viento) con muy baja latencia.
-* **Batch Layer:** Implementa una estrategia ELT (Extract, Load, Transform). Los datos se persisten en raw (Capa Bronce) en PostgreSQL. Posteriormente, procesos orquestados por lotes transforman y segmentan la información en tablas analíticas (Capa Gold) orientadas a la lógica de negocio.
+El sistema ha sido diseñado bajo un principio de desacoplamiento estricto. Cada capa (Emulador, Ingesta, Procesamiento Batch y Explotación) funciona como un módulo independiente. Esta decisión de diseño garantiza que:
+
+La estabilidad no sea un punto único de fallo: Si el módulo de procesamiento analítico (Spark) o el de visualización fallan, la ingesta de datos en tiempo real sigue operando sin interrupciones.
+
+Escalabilidad modular: Cada componente puede evolucionar o ser reemplazado individualmente (por ejemplo, migrar la visualización de un frontend custom a Power BI) sin afectar a la lógica de negocio del backend.
 
 
 ## Diagrama de la Arquitectura
